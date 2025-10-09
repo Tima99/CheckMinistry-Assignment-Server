@@ -7,6 +7,9 @@ const router = Router();
 // Get all orders
 router.get("/", OrderController.getAllOrders);
 
+// Search Orders
+router.get("/search", OrderController.deleteOrder);
+
 // Get order by ID
 router.get("/:id", OrderController.getOrderById);
 

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
+import formatOrdersWithCount from "../utils/formatOrdersWithCount"
 
 export const OrderController = {
   // Get all orders
@@ -18,18 +19,11 @@ export const OrderController = {
       });
 
       // Format orders rows data
-      const ordersWithProductCount = orderRows.map((order) => {
-        return {
-          ...order,
-          count: order._count.orderMaps,
-          //  remove fields
-          _count: undefined,
-        };
-      });
+      const ordersWithProductCount = formatOrdersWithCount(orderRows);
 
-      res.json(ordersWithProductCount);
-    } catch (message) {
-      res.status(500).json({ message: (message as Error).message });
+      res.json({ data: ordersWithProductCount });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
     }
   },
 
@@ -51,9 +45,9 @@ export const OrderController = {
 
       if (!order) return res.status(404).json({ message: "Order not found" });
 
-      res.json(order);
-    } catch (message) {
-      res.status(500).json({ message: (message as Error).message });
+      res.json({ data: order });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
     }
   },
 
@@ -72,11 +66,13 @@ export const OrderController = {
         },
       });
 
-      res.status(201).json({
-        id: order.id,
-        orderDescription: order.orderDescription,
-        createdAt: order.createdAt,
-        productCount: productIds.length,
+      res.status(201).json({ 
+        data: {
+          id: order.id,
+          orderDescription: order.orderDescription,
+          createdAt: order.createdAt,
+          productCount: productIds.length,
+        }
       });
     } catch (err) {
       res.status(500).json({ message: (err as Error).message });
@@ -94,9 +90,9 @@ export const OrderController = {
         data: { orderDescription },
       });
 
-      res.json(order);
-    } catch (message) {
-      res.status(500).json({ message: (message as Error).message });
+      res.json({ data: order });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
     }
   },
 
@@ -107,8 +103,60 @@ export const OrderController = {
 
       await prisma.order.delete({ where: { id: Number(id) } });
       res.status(204).send();
-    } catch (message) {
-      res.status(500).json({ message: (message as Error).message });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
+    }
+  },
+
+  // Search Order
+  async SearchOrder(req: Request, res: Response) {
+    try {
+      const { q: query } = req.query;
+
+      if(typeof query !== 'string') {
+        return res.status(404).json({ message: 'Bad Request Exception'})
+      }
+      
+      // if no search query their return all orders
+      if (!query?.length) {
+        return await this.getAllOrders(req, res);
+      }
+  
+      let orders;
+
+      const commonSelectQuery = {
+        id: true,
+        orderDescription: true,
+        createdAt: true,
+        _count: { select: { orderMaps: true } },
+      }
+  
+      if (!isNaN(Number(query))) {
+        // If the query is a valid number, search only by 'id' using findUnique for faster lookup
+        const order = await prisma.order.findUnique({
+          where: { id: Number(query) },
+          select:commonSelectQuery,
+        });
+      
+        orders = order ? [order] : [];
+      } else {
+        // Otherwise, search by 'orderDescription' using case-insensitive findMany
+        const orderRows = await prisma.order.findMany({
+          where: {
+            orderDescription: { contains: query, mode: "insensitive" },
+          },
+          select: commonSelectQuery
+        });
+      
+        orders = orderRows
+      }
+      
+      // Format orders
+      orders = formatOrdersWithCount(orders)
+
+      res.json({ data: orders });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
     }
   },
 };
