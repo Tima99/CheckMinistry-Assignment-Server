@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "index.ts",
   "scripts": {
-    "start": "nodemon index.ts"
+    "start": "nodemon ./src/index.ts"
   },
   "keywords": [],
   "author": "Ives van Hoorne",
@@ -13,10 +13,12 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.16",
     "nodemon": "^3.0.3",
+    "prisma": "^6.17.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
   "dependencies": {
+    "@prisma/client": "^6.17.0",
     "express": "^4.19.2"
   }
 }

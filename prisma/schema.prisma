@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Product table stores all available products
+model Product {
+  id                 Int                @id @default(autoincrement()) // Primary key
+  productName        String                               // Name of the product
+  productDescription String?                              // Optional product description
+  orderMaps          OrderProductMap[]                   // Relation to orders
+}
+
+/// Order table stores customer orders
+model Order {
+  id               Int                @id @default(autoincrement()) // Primary key
+  orderDescription String                               // Description of the order
+  createdAt        DateTime  @default(now())           // Order creation timestamp
+  orderMaps        OrderProductMap[]                   // Relation to products
+}
+
+/// Many-to-Many relationships between Orders and Products
+model OrderProductMap {
+  id        Int     @id @default(autoincrement())       // Primary key
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade) // Link to Order
+  orderId   Int                                         // Foreign key to Order
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade) // Link to Product
+  productId Int                                         // Foreign key to Product
+}
