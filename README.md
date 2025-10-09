@@ -70,7 +70,7 @@ cd CheckMinistry-Assignment-Server
 ### 2️⃣ Install dependencies
 
 ```bash
-npm -D install
+npm install
 ```
 
 ### 3️⃣ Configure environment variables
