@@ -19,6 +19,7 @@ async function main() {
   ];
 
   // Delete all old products and insert new ones in a single transaction
+  // This will also impact product mapping n orderproductmap for assignment purpose we make it idempotent
   await prisma.$transaction([
     prisma.product.deleteMany(), // delete all existing products
     ...products.map((p) => prisma.product.create({ data: p })), // insert new products
