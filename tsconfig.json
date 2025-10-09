@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                        // Modern JS features
-    "module": "CommonJS",                       // Node default module
-    "rootDir": "./src",                         // Source code folder
-    "outDir": "./dist",                         // Compiled JS output
-    "strict": true,                             // Enable all strict checks
-    "esModuleInterop": true,                    // For import express from "express"
-    "forceConsistentCasingInFileNames": true,  // Avoid import case issues
-    "skipLibCheck": true                        // Skip node_modules type checks
-  }
+    "target": "ES2020",
+    "module": "commonjs",
+    "outDir": "dist",           // Compiled JS will go here
+    "rootDir": "src",           // Source TS files
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"]
 }
