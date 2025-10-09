@@ -109,7 +109,7 @@ export const OrderController = {
   },
 
   // Search Order
-  async SearchOrder(req: Request, res: Response) {
+  async searchOrder(req: Request, res: Response) {
     try {
       const { q: query } = req.query;
 
