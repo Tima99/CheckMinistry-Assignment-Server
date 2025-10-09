@@ -18,7 +18,7 @@ model Product {
   id                 Int                @id @default(autoincrement()) // Primary key
   productName        String                               // Name of the product
   productDescription String?            @db.VarChar(100)  // Optional product description
-  orderMaps          OrderProductMap[]                   // Relation to orders
+  orders             OrderProductMap[]                   // Relation to orders
 }
 
 /// Order table stores customer orders
@@ -26,7 +26,7 @@ model Order {
   id               Int                @id @default(autoincrement()) // Primary key
   orderDescription String             @db.VarChar(100)       // Description of the order
   createdAt        DateTime  @default(now())           // Order creation timestamp
-  orderMaps        OrderProductMap[]                   // Relation to products
+  products         OrderProductMap[]                   // Relation to products
 }
 
 /// Many-to-Many relationships between Orders and Products

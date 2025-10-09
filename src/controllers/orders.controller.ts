@@ -13,7 +13,7 @@ export const OrderController = {
           orderDescription: true,
           createdAt: true,
           _count: {
-            select: { orderMaps: true },
+            select: { products: true },
           },
         },
       });
@@ -40,7 +40,7 @@ export const OrderController = {
       // Find Order with their products details
       const order = await prisma.order.findUnique({
         where: { id: Number(id) },
-        include: { orderMaps: { include: { product: true } } },
+        include: { products: { include: { product: true } } },
       });
 
       if (!order) return res.status(404).json({ message: "Order not found" });
@@ -60,7 +60,7 @@ export const OrderController = {
       const order = await prisma.order.create({
         data: {
           orderDescription,
-          orderMaps: {
+          products: {
             create: productIds.map((pid: number) => ({ productId: pid })),
           },
         },
@@ -128,14 +128,14 @@ export const OrderController = {
         id: true,
         orderDescription: true,
         createdAt: true,
-        _count: { select: { orderMaps: true } },
+        _count: { select: { products: true } },
       }
   
       if (!isNaN(Number(query))) {
         // If the query is a valid number, search only by 'id' using findUnique for faster lookup
         const order = await prisma.order.findUnique({
           where: { id: Number(query) },
-          select:commonSelectQuery,
+          select: commonSelectQuery,
         });
       
         orders = order ? [order] : [];
