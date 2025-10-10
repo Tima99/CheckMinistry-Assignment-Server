@@ -1,35 +1,34 @@
-
 ---
-
 # 🛒 Order Management Backend API
 
 A **full-featured backend** for managing orders, built with **Node.js, TypeScript, Prisma, and PostgreSQL**. Provides REST APIs to create, read, update, delete, and search orders with product counts.
-
 ---
 
 ## 🔹 Tech Stack
 
-* **Backend Framework:** Node.js + Express.js
-* **Language:** TypeScript
-* **Database:** PostgreSQL (RDBMS)
-* **ORM:** Prisma
-* **Validation & Sanitization:** Zod
-* **API Testing:** Postman / cURL
-* **Deployment:** Render
+- **Backend Framework:** Node.js + Express.js
+- **Language:** TypeScript
+- **Database:** PostgreSQL (RDBMS)
+- **ORM:** Prisma
+- **Validation & Sanitization:** Zod
+- **API Testing:** Postman / cURL
+- **Deployment:** Render
 
 ---
+
 ## 🚀Deployed URL: https://checkministry-assignment-server.onrender.com/api/v1/orders
+
 ---
 
 ## 📦 Features
 
-* CRUD operations on **Orders**
-* Search orders by **ID** or **description** (case-insensitive)
-* Count of products per order
-* Input validation & sanitization
-* Error handling (404, 400, 500)
-* Clean, modular architecture (Controllers, Routes, Middleware)
-* Ready for production (compiled TypeScript → JavaScript)
+- CRUD operations on **Orders**
+- Search orders by **ID** or **description** (case-insensitive)
+- Count of products per order
+- Input validation & sanitization
+- Error handling (404, 400, 500)
+- Clean, modular architecture (Controllers, Routes, Middleware)
+- Ready for production (compiled TypeScript → JavaScript)
 
 ---
 
@@ -48,7 +47,7 @@ project-root/
 │
 ├─ prisma/
 │   ├─ schema.prisma     # Database schema
-│   └─ seed.ts           # Sample products data seed 
+│   └─ seed.ts           # Sample products data seed
 │
 ├─ package.json
 ├─ tsconfig.json
@@ -116,8 +115,8 @@ npx ts-node prisma/seed.ts
 npm run dev
 ```
 
-* Uses `ts-node` to run TypeScript directly.
-* Available at: `http://localhost:3000/api/v1/orders`
+- Uses `ts-node` to run TypeScript directly.
+- Available at: `http://localhost:3000/api/v1/orders`
 
 #### Production
 
@@ -126,8 +125,8 @@ npm run build
 npm start
 ```
 
-* Compiles TypeScript → JavaScript in `dist/`
-* Runs Node on compiled JS
+- Compiles TypeScript → JavaScript in `dist/`
+- Runs Node on compiled JS
 
 ---
 
@@ -145,8 +144,8 @@ npm start
 
 ### 7️⃣ Testing
 
-* **Postman / Insomnia / cURL** can be used to test all endpoints.
-* Example cURL to create an order:
+- **Postman / Insomnia / cURL** can be used to test all endpoints.
+- Example cURL to create an order:
 
 ```bash
 curl -X POST http://localhost:3000/api/v1/orders \
@@ -154,13 +153,23 @@ curl -X POST http://localhost:3000/api/v1/orders \
   -d '{"orderDescription":"New Laptop","productIds":[1,2]}'
 ```
 
+Failure of an order if description exceeds more than 100 characters:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/orders \
+  -H "Content-Type: application/json" \
+  -d '{"orderDescription":"This is a detailed order description used for testing purposes. The customer requested a custom 2-t11","productIds":[1,2]}'
+
+{"message":"Order description cannot exceed 100 characters"}
+```
+
 ---
 
 ### 8️⃣ Notes & Recommendations
 
-* All numeric queries search **order ID**, otherwise search is **case-insensitive on description**.
-* Input validation handled using **Zod** schemas.
-* Product IDs are validated against database before creating an order.
-* Minor validation can be handled in the controller, but for complex structures, it is recommended to use Zod.
+- All numeric queries search **order ID**, otherwise search is **case-insensitive on description**.
+- Input validation handled using **Zod** schemas.
+- Product IDs are validated against database before creating an order.
+- Minor validation can be handled in the controller, but for complex structures, it is recommended to use Zod.
 
 ---

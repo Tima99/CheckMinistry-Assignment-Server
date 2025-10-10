@@ -4,7 +4,11 @@ import prisma from "../db";
 
 // Zod schema for creating order
 const orderSchema = z.object({
-  orderDescription: z.string().trim().min(1, "Order description is required"),
+  orderDescription: z
+    .string()
+    .trim()
+    .min(1, "Order description is required")
+    .max(100, "Order description cannot exceed 100 characters"),
   productIds: z.array(z.number()).nonempty("At least one product is required"),
 });
 
