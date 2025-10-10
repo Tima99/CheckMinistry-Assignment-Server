@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../db";
-import formatOrdersWithCount from "../utils/formatOrdersWithCount"
+import formatOrdersWithCount from "../utils/formatOrdersWithCount";
 
 export const OrderController = {
   // Get all orders
@@ -66,13 +66,13 @@ export const OrderController = {
         },
       });
 
-      res.status(201).json({ 
+      res.status(201).json({
         data: {
           id: order.id,
           orderDescription: order.orderDescription,
           createdAt: order.createdAt,
           productCount: productIds.length,
-        }
+        },
       });
     } catch (err) {
       res.status(500).json({ message: (err as Error).message });
@@ -83,12 +83,48 @@ export const OrderController = {
   async updateOrder(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { orderDescription } = req.body;
+      const { orderDescription, productIds } = req.body;
 
-      const order = await prisma.order.update({
+      if (!Array.isArray(productIds)) {
+        return res.status(400).json({ message: "productIds must be an array" });
+      }
+
+      // Fetch existing product mappings
+      const existingOrder = await prisma.order.findUnique({
         where: { id: Number(id) },
-        data: { orderDescription },
+        include: { products: true },
       });
+
+      if (!existingOrder)
+        return res.status(404).json({ message: "Order not found" });
+
+      const existingProductIds = existingOrder.products.map(
+        (product) => product.productId
+      );
+
+      // Determine which mappings to remove and which to add
+      const toRemove = existingProductIds.filter(
+        (pid) => !productIds.includes(pid)
+      );
+      const toAdd = productIds.filter(
+        (pid) => !existingProductIds.includes(pid)
+      );
+
+      // Update db query
+      const order = await prisma.$transaction([
+        prisma.order.update({
+          where: { id: Number(id) },
+          data: {
+            orderDescription,
+            products: {
+              // remove old mappings
+              deleteMany: { productId: { in: toRemove } },
+              // add new mappings
+              create: toAdd.map((pid) => ({ productId: pid })),
+            },
+          },
+        }),
+      ]);
 
       res.json({ data: order });
     } catch (error) {
@@ -113,15 +149,15 @@ export const OrderController = {
     try {
       const { q: query } = req.query;
 
-      if(typeof query !== 'string') {
-        return res.status(404).json({ message: 'Bad Request Exception'})
+      if (typeof query !== "string") {
+        return res.status(404).json({ message: "Bad Request Exception" });
       }
-      
+
       // if no search query their return all orders
       if (!query?.length) {
         return await this.getAllOrders(req, res);
       }
-  
+
       let orders;
 
       const commonSelectQuery = {
@@ -129,15 +165,15 @@ export const OrderController = {
         orderDescription: true,
         createdAt: true,
         _count: { select: { products: true } },
-      }
-  
+      };
+
       if (!isNaN(Number(query))) {
         // If the query is a valid number, search only by 'id' using findUnique for faster lookup
         const order = await prisma.order.findUnique({
           where: { id: Number(query) },
           select: commonSelectQuery,
         });
-      
+
         orders = order ? [order] : [];
       } else {
         // Otherwise, search by 'orderDescription' using case-insensitive findMany
@@ -145,14 +181,14 @@ export const OrderController = {
           where: {
             orderDescription: { contains: query, mode: "insensitive" },
           },
-          select: commonSelectQuery
+          select: commonSelectQuery,
         });
-      
-        orders = orderRows
+
+        orders = orderRows;
       }
-      
+
       // Format orders
-      orders = formatOrdersWithCount(orders)
+      orders = formatOrdersWithCount(orders);
 
       res.json({ data: orders });
     } catch (error) {
