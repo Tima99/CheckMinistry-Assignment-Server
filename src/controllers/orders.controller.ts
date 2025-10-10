@@ -16,6 +16,9 @@ export const OrderController = {
             select: { products: true },
           },
         },
+        orderBy: {
+          id: "desc",
+        },
       });
 
       // Format orders rows data
