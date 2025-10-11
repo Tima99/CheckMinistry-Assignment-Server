@@ -59,6 +59,13 @@ project-root/
 
 ## ⚙️ Setup Instructions
 
+# Recommended Versions:
+
+```bash
+Node.js: >=20.5.0
+npm: >=10.5.0
+```
+
 ### 1️⃣ Clone the repository
 
 ```bash
