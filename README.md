@@ -106,7 +106,7 @@ Run migrations to create tables:
 npx prisma migrate dev --name init
 ```
 
-(Mandatory) Seed sample products:
+Seed sample products:
 
 ```bash
 npx ts-node prisma/seed.ts
