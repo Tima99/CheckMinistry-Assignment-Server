@@ -5,9 +5,9 @@
   "license": "MIT",
   "main": "index.ts",
   "scripts": {
-    "build": "npx prisma migrate deploy && npx prisma generate && tsc",
-    "start": "node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts"
+    "build": "node init && npx prisma migrate deploy && npx prisma generate && tsc",
+    "start": "node init && node ./dist/index.js",
+    "dev": "node init && nodemon ./src/index.ts"
   },
   "keywords": [],
   "author": "Ives van Hoorne",
@@ -23,7 +23,9 @@
   "dependencies": {
     "@prisma/client": "^6.17.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
     "zod": "^4.1.12"
   }
 }

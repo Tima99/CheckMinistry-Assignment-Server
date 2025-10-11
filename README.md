@@ -59,7 +59,7 @@ project-root/
 
 ## ⚙️ Setup Instructions
 
-# Recommended Versions:
+### Recommended Versions:
 
 ```bash
 Node.js: >=20.5.0
